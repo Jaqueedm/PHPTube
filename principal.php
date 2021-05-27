@@ -1,13 +1,25 @@
 <?php
-session_start();
 
+session_start();
 $autorizado = $_SESSION['autorizado'];
 
 if($autorizado==false){
   echo "inicia sesion para ingresar";
-  echo '<meta http-equiv="refresh" content="2; url=inicio.sesion.php">';
+  echo '<meta http-equiv="refresh" content="0; url=login.php">';
   die();
 }
+
+require_once('funciones.php');
+
+obtener_imagen_usuario();
+
+//recibimos post de formulario cambio de imagen usuario
+if ($_FILES){
+  $archivo = $_FILES;
+  $msg = graba_video($archivo);
+}
+
+$videos = obtiene_videos();
 
 ?>
 
@@ -60,7 +72,7 @@ if($autorizado==false){
 
   <header class="main-header">
     <!-- Logo -->
-    <a href="index2.html" class="logo">
+    <a href="principal.php" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini"><b>A</b>LT</span>
       <!-- logo for regular state and mobile devices -->
@@ -75,10 +87,16 @@ if($autorizado==false){
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">
 
-          <!-- Tasks: style can be found in dropdown.less -->
+              <li class="dropdown user user-menu">
+            <form style="margin-top:10px"  action="principal.php" method="post" enctype="multipart/form-data">
+                  <button  type="submit" class="btn btn-danger pull-left">Actualizar</button>
+                  <input style="margin-left:5px" class="pull-right" name="archivo" type="file" >
+            </form>
+          </li>
+
           <li class="dropdown tasks-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-flag-o"></i>
+              <i class="fa fa-bell-o"></i>
               <span class="label label-danger">9</span>
             </a>
             <ul class="dropdown-menu">
@@ -153,11 +171,10 @@ if($autorizado==false){
               </li>
             </ul>
           </li>
-
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <img src="dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
+              <img src="<?php echo obtener_imagen_usuario(); ?>" class="user-image" alt="User Image">
               <span class="hidden-xs"><?php echo $_SESSION['usuario_nombre'] ?></span>
             </a>
           </li>
@@ -181,7 +198,7 @@ if($autorizado==false){
       <!-- Sidebar user panel -->
       <div class="user-panel">
         <div class="pull-left image">
-          <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+          <img src="<?php echo obtener_imagen_usuario(); ?>" class="img-circle" alt="User Image">
         </div>
         <div class="pull-left info">
           <p> <?php echo $_SESSION['usuarios_email'] ?></p>
@@ -202,8 +219,9 @@ if($autorizado==false){
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">Menú de navegación</li>
-        <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
-        <li class="active treeview">
+
+        <a href="#"><i class="fa fa-circle text-success"></i> En linea</a>
+        <li class="">
           <a href="#">
             <i class="fa fa-users "></i> <span>Seguir</span>
             <span class="pull-right-container">
@@ -211,11 +229,17 @@ if($autorizado==false){
           </a>
         </li>
 
+                <li class="active">
+          <a href="principal.php">
+            <i class="fa fa-binoculars"></i> <span>Descubrir</span>
+          </a>
+        </li>
+
 
 
         <li class="header">Opciones</li>
 
-        <li class="active treeview">
+        <li class="">
           <a href="configuracion.php">
             <i class="fa fa-cog "></i> <span>Configuración</span>
             <span class="pull-right-container">
@@ -223,8 +247,8 @@ if($autorizado==false){
           </a>
         </li>
 
-        <li class="active treeview">
-          <a href="configuracion.php">
+        <li class="">
+          <a href="logout.php">
             <i class="fa fa-power-off"></i> <span>Cerrar sesión</span>
             <span class="pull-right-container">
             </span>
@@ -249,37 +273,99 @@ if($autorizado==false){
     <!-- Main content -->
     <section class="content">
       <!-- Small boxes (Stat box) -->
+
+<?php foreach ($videos as $video) { ?>
+
       <div class="row">
-        <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-aqua">
-            <div class="inner">
-              <h3>150</h3>
+        <div class="col-lg-6">
+          <!-- Box Comment -->
+          <div class="box box-widget">
+            <div class="box-header with-border">
+              <div class="user-block">
+                <img class="img-circle" src="<?php echo $video['usuarios_imagen']; ?>" alt="User Image">
+                <span class="username"><a href="#"><?php echo $video['usuarios_email']; ?></a></span>
+                <span class="description">Publicado: <?php echo $video['videos_fecha']; ?></span>
+              </div>
+              <!-- /.user-block -->
+              <div class="box-tools">
+                <button type="button" class="btn btn-box-tool" data-toggle="tooltip" title="" data-original-title="Mark as read">
+                  <i class="fa fa-circle-o"></i></button>
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+              </div>
+              <!-- /.box-tools -->
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
 
-              <p>New Orders</p>
+              <video controls style="width:100%">
+                  <source src="<?php echo $video['videos_url']; ?>" type="video/mp4">
+              </video>
+
+              <p>I took this photo this morning. What do you guys think?</p>
+              <button type="button" class="btn btn-default btn-xs"><i class="fa fa-share"></i> Share</button>
+              <button type="button" class="btn btn-default btn-xs"><i class="fa fa-thumbs-o-up"></i> Like</button>
+              <span class="pull-right text-muted">127 likes - 3 comments</span>
             </div>
-            <div class="icon">
-              <i class="ion ion-bag"></i>
+            <!-- /.box-body -->
+            <div class="box-footer box-comments">
+              <div class="box-comment">
+                <!-- User image -->
+                <img class="img-circle img-sm" src="dist/img/user3-128x128.jpg" alt="User Image">
+
+                <div class="comment-text">
+                      <span class="username">
+                        Maria Gonzales
+                        <span class="text-muted pull-right">8:03 PM Today</span>
+                      </span><!-- /.username -->
+                  It is a long established fact that a reader will be distracted
+                  by the readable content of a page when looking at its layout.
+                </div>
+                <!-- /.comment-text -->
+              </div>
+              <!-- /.box-comment -->
+              <div class="box-comment">
+                <!-- User image -->
+                <img class="img-circle img-sm" src="dist/img/user4-128x128.jpg" alt="User Image">
+
+                <div class="comment-text">
+                      <span class="username">
+                        Luna Stark
+                        <span class="text-muted pull-right">8:03 PM Today</span>
+                      </span><!-- /.username -->
+                  It is a long established fact that a reader will be distracted
+                  by the readable content of a page when looking at its layout.
+                </div>
+                <!-- /.comment-text -->
+              </div>
+              <!-- /.box-comment -->
             </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            <!-- /.box-footer -->
+            <div class="box-footer">
+              <form action="#" method="post">
+                <img class="img-responsive img-circle img-sm" src="<?php echo obtener_imagen_usuario() ?>" alt="Alt Text">
+                <!-- .img-push is used to add margin to elements next to floating images -->
+                <div class="img-push">
+                  <input type="text" class="form-control input-sm" placeholder="Press enter to post comment">
+                </div>
+              </form>
+            </div>
+            <!-- /.box-footer -->
           </div>
         </div>
         <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-green">
-            <div class="inner">
-              <h3>53<sup style="font-size: 20px">%</sup></h3>
+      </div>
 
-              <p>Bounce Rate</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-stats-bars"></i>
-            </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <!-- ./col -->
+<?php } ?>
+
+
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+
+
       </div>
       <!-- /.row -->
     </section>
