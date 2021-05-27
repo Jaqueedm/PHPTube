@@ -36,7 +36,7 @@ if( isset($_POST['email']) && isset($_POST['password']) && isset($_POST['repite_
   if ($password != $repite_password){
     $msg.="Las claves no coinciden <br>";
   }else if (strlen($password)<6){
-    $msg.="La clave debe tener al menos 8 caracteres <br>";
+    $msg.="La clave debe tener al menos 6 caracteres <br>";
   }else{
     //noa conectamos a db
     $mysqli = mysqli_connect("localhost","root","","phptube");
@@ -57,7 +57,7 @@ if( isset($_POST['email']) && isset($_POST['password']) && isset($_POST['repite_
 
     //solo si no hay un usuario con mismo mail, procedemos a insertar fila con nuevo usuario
     if ($cantidad == 0){
-      $password = sha1($password); //encriptar clave con sha1
+      $password = sha1($password); //encripta la clave con sha1
       $mysqli->query("INSERT INTO `usuarios` (`usuarios_email`, `usuarios_password`, `usuarios_ip`,`usuario_nombre`) VALUES ('$email', '$password', '$ip', '$nombre')");
       $msg.="Usuario creado correctamente";
     }else{
