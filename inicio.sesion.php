@@ -39,7 +39,7 @@ if(isset($_POST['email']) && isset($_POST['password'])) {
  
  //si todo esta bien te deja ingresar
     if ($cantidad == 1){
-      $hoy = date ( "Y-m-d e:G:i:s" );
+      $hoy = gmdate ( 'Y-m-d H:i:s' ); 
       $resultado = $mysqli->query("UPDATE `usuarios` SET `usuarios_ultimo_login`,'usuario_nombre' = '$hoy' WHERE `usuarios_email` =  '$email' ");
       $msg .= "Bienvenido";
       $_SESSION['autorizado'] = true; //redireccionamos y epera 1 segundo
