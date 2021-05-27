@@ -5,7 +5,7 @@ $autorizado = $_SESSION['autorizado'];
 
 if($autorizado==false){
   echo "inicia sesion para ingresar";
-  echo '<meta http-equiv="refresh" content="0; url=login.php">';
+  echo '<meta http-equiv="refresh" content="0; url=inicio.sesion.php">';
   die();
 }
 
@@ -221,15 +221,8 @@ $videos = obtiene_videos();
         <li class="header">Menú de navegación</li>
 
         <a href="#"><i class="fa fa-circle text-success"></i> En linea</a>
-        <li class="">
-          <a href="#">
-            <i class="fa fa-users "></i> <span>Seguir</span>
-            <span class="pull-right-container">
-            </span>
-          </a>
-        </li>
 
-                <li class="active">
+          <li class="active">
           <a href="principal.php">
             <i class="fa fa-binoculars"></i> <span>Descubrir</span>
           </a>
@@ -248,7 +241,7 @@ $videos = obtiene_videos();
         </li>
 
         <li class="">
-          <a href="logout.php">
+          <a href="inicio.sesion.php">
             <i class="fa fa-power-off"></i> <span>Cerrar sesión</span>
             <span class="pull-right-container">
             </span>
@@ -274,7 +267,7 @@ $videos = obtiene_videos();
     <section class="content">
       <!-- Small boxes (Stat box) -->
 
-<?php foreach ($videos as $video) { ?>
+<?php foreach ($videos as $video); { ?>
 
       <div class="row">
         <div class="col-lg-6">
@@ -282,7 +275,7 @@ $videos = obtiene_videos();
           <div class="box box-widget">
             <div class="box-header with-border">
               <div class="user-block">
-                <img class="img-circle" src="<?php echo $video['usuarios_imagen']; ?>" alt="User Image">
+                <img class="img-circle" src="<?php echo obtener_imagen_usuario() ?>" alt="User Image">
                 <span class="username"><a href="#"><?php echo $video['usuarios_email']; ?></a></span>
                 <span class="description">Publicado: <?php echo $video['videos_fecha']; ?></span>
               </div>
